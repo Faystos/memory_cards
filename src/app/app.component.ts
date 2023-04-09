@@ -1,20 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Scene, Game, Types, AUTO, Utils } from 'phaser';
+
 import { getCardPositions } from './shared/util';
 import { CONSTANTS } from './shared/constants';
 import { Card } from './shared/card';
 import { PositionInterface } from './shared/types';
 
-class NewScene extends Scene {
-  cardsNumer: number[] = [1, 2, 3, 4, 5];
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent extends Scene {
+  private phaserGame: Game;
+  private config: Types.Core.GameConfig = {
+    type: AUTO,
+    scene: [this],
+    width: CONSTANTS.width,
+    height: CONSTANTS.height,
+  };
+  private cardsNumer: number[] = [1, 2, 3, 4, 5];
+  private cards!: Card[];
+
   constructor() {
     super('Game');
+    this.phaserGame = new Game(this.config);
   }
 
   preload = () => {
     this.load.image('background', '../assets/sprites/background.png');
     this.load.image('card', '../assets/sprites/card.png');
-
     this.load.image('card1', '../assets/sprites/card1.png');
     this.load.image('card2', '../assets/sprites/card2.png');
     this.load.image('card3', '../assets/sprites/card3.png');
@@ -33,7 +48,6 @@ class NewScene extends Scene {
   };
 
   renderingCards = () => {
-    const cards: Card[] = [];
     const positions: PositionInterface[] = Utils.Array.Shuffle(
       getCardPositions(
         +this.sys.game.config.width,
@@ -41,37 +55,21 @@ class NewScene extends Scene {
       )
     );
 
-    this.cardsNumer.forEach((number) => {
-      for (let i = 0; i < 2; i++) {
-        cards.push(new Card(this, positions.pop(), number, 'card'));
-      }
-    });
+    this.cards = this.initCards(this.cardsNumer, positions);
   };
 
   onOpenCard = (pointer: any, card: Card) => {
     card.onOpenCard();
   };
-}
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-})
-export class AppComponent implements OnInit {
-  phaserGame!: Game;
-  config!: Types.Core.GameConfig;
+  initCards = (cardsNumer: number[], positions: PositionInterface[]): Card[] => {
+    const cards: Card[] = [];
+    cardsNumer.forEach((number) => {
+      for (let i = 0; i < 2; i++) {
+        cards.push(new Card(this, positions.pop(), number, 'card'));
+      }
+    });
+    return cards
+  };
 
-  constructor() {
-    this.config = {
-      type: AUTO,
-      scene: [NewScene],
-      width: CONSTANTS.width,
-      height: CONSTANTS.height,
-    };
-  }
-
-  ngOnInit(): void {
-    this.phaserGame = new Game(this.config);
-  }
 }
