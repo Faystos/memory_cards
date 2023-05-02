@@ -68,11 +68,9 @@ export class AppComponent extends Scene {
       } else {
         this.openedCard.onCloseCard();
         this.openedCard = card;
-        console.log('закрываем');
       }
     } else {
       this.openedCard = card;
-      console.log('присваиваем');
     }
     card.onOpenCard();
   };
