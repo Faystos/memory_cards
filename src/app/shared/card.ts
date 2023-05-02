@@ -2,8 +2,9 @@ import { GameObjects, Scene } from 'phaser';
 import { PositionInterface } from './types';
 
 export class Card extends GameObjects.Sprite {
-  private nameNumber: number;
+  public nameNumber: number;
   public name: string;
+  public isOpenedCard: boolean = false;
 
   constructor(
     scene: Scene,
@@ -21,6 +22,12 @@ export class Card extends GameObjects.Sprite {
   }
 
   public onOpenCard = () => {
+    this.isOpenedCard = true;
     this.setTexture(`${this.name}${this.nameNumber}`);
+  };
+
+  public onCloseCard = () => {
+    this.isOpenedCard = false;
+    this.setTexture('card');
   };
 }

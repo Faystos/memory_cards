@@ -21,6 +21,7 @@ export class AppComponent extends Scene {
   };
   private cardsNumer: number[] = [1, 2, 3, 4, 5];
   private cards!: Card[];
+  private openedCard: Card | null = null;
 
   constructor() {
     super('Game');
@@ -59,17 +60,33 @@ export class AppComponent extends Scene {
   };
 
   onOpenCard = (pointer: any, card: Card) => {
+    if (card.isOpenedCard) return;
+
+    if (this.openedCard) {
+      if (this.openedCard.nameNumber === card.nameNumber) {
+        this.openedCard = null;
+      } else {
+        this.openedCard.onCloseCard();
+        this.openedCard = card;
+        console.log('закрываем');
+      }
+    } else {
+      this.openedCard = card;
+      console.log('присваиваем');
+    }
     card.onOpenCard();
   };
 
-  initCards = (cardsNumer: number[], positions: PositionInterface[]): Card[] => {
+  initCards = (
+    cardsNumer: number[],
+    positions: PositionInterface[]
+  ): Card[] => {
     const cards: Card[] = [];
     cardsNumer.forEach((number) => {
       for (let i = 0; i < 2; i++) {
         cards.push(new Card(this, positions.pop(), number, 'card'));
       }
     });
-    return cards
+    return cards;
   };
-
 }
